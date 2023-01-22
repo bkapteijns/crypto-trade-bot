@@ -29,4 +29,4 @@ while(True):
 
     print("new batch saved")
 
-    time.sleep(50000)
+    time.sleep(10000)

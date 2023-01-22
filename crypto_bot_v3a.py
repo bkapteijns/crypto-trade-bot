@@ -22,7 +22,8 @@ secret.close()
 
 n_indicators = 10
 aggression = 4  # Aggression variable from 1 to n_indicators/2
-threshold = 0.08   # What percentage change is valid
+threshold = 0.05   # What percentage change is valid
+future = 50
 
 print("Balance:\t", "BTC:", exchange.fetch_balance()[
       "BTC"], "\n\t\t", "USD:", exchange.fetch_balance()["USDT"])
@@ -80,9 +81,9 @@ df = df[33:, 4:]
 
 y = np.zeros(len(df) - 100)
 for i in range(100, len(df)):
-    if change(df[i, 0], np.mean(df[i+1:i+51, 0])) > threshold:
+    if change(df[i, 0], np.mean(df[i+1:i+1+future, 0])) > threshold:
         y[i-100] = 1
-    elif change(df[i, 0], np.mean(df[i+1:i+51, 0])) < 0-threshold:
+    elif change(df[i, 0], np.mean(df[i+1:i+1+future, 0])) < 0-threshold:
         y[i-100] = -1
 
 X = np.zeros([len(df) - 100, 100, 18])
