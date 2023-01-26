@@ -20,6 +20,7 @@ exchange.secret = secret.read()
 secret.close()
 
 # Bot values
+confidence = 0.2
 threshold = 0
 past = 100
 future = 20
@@ -143,32 +144,39 @@ X = X.reshape([len(df) - past, 18 * past])
 ## Perform the trading
 values = np.zeros(len(df) - 33)
 
-for confidence in [0, 0.1, 0.2, 0.3, 0.4]:
-    values = np.zeros(len(df) - 33)
-    capital = 30000
-    bitcoins = 0
-    for i in range(len(df) - past):
-        if model.predict_proba([X[i]])[0][1] >= 0.5 + confidence:
-            if not long:
-                long = True
-                short = False
-                while bitcoins < 1:
-                    buy(df[i, 0] + 1)
-        elif model.predict_proba([X[i]])[0][0] >= 0.5 + confidence:
-            # Sell signal
-            if not short:
-                long = False
-                short = True
-                while bitcoins > -1:
+for confidence in [0.1, 0.2, 0.3, 0.4]:
+    for close_confidence in [-0.1, 0, 0.1]:
+        values = np.zeros(len(df) - 33)
+        capital = 30000
+        bitcoins = 0
+        for i in range(len(df) - past):
+            if model.predict_proba([X[i]])[0][1] >= 0.5 + confidence:
+                if not long:
+                    long = True
+                    short = False
+                    while bitcoins < 1:
+                        buy(df[i, 0] + 1)
+            elif model.predict_proba([X[i]])[0][0] >= 0.5 + confidence:
+                # Sell signal
+                if not short:
+                    long = False
+                    short = True
+                    while bitcoins > -1:
+                        sell(df[i, 0] - 1)
+            else:
+                if long and model.predict_proba([X[i]])[0][1] >= 0.5 + close_confidence:
                     sell(df[i, 0] - 1)
-        else:
-            if long:
-                sell(df[i, 0] - 1)
-            if short:
-                buy(df[i, 0] + 1)
-            long = False
-            short = False
-        values[i] = capital + bitcoins * df[i, 0]
+                if short and model.predict_proba([X[i]])[0][0] >= 0.5 + confidence:
+                    buy(df[i, 0] + 1)
+                long = False
+                short = False
+            values[i] = capital + bitcoins * df[i, 0]
 
-    plt.plot(range(len(df) - 33), values)
-    plt.show()
+        plt.plot(range(len(df) - 33), values)
+        print(
+            "Confidence: ",
+            str(confidence),
+            ", close confidence: ",
+            str(close_confidence),
+        )
+        plt.show()

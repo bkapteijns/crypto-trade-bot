@@ -134,13 +134,6 @@ df = df.to_numpy()
 # first 4 columns are timestamp, open, high, and low; some indicators use previous data to compute (so you get NANs)
 df = df[33:, 4:]
 
-y = np.zeros(len(df) - past)
-for i in range(past, len(df)):
-    if change(df[i, 0], np.mean(df[i + 1 : i + 1 + future, 0])) > threshold:
-        y[i - past] = 1
-    elif change(df[i, 0], np.mean(df[i + 1 : i + 1 + future, 0])) < 0 - threshold:
-        y[i - past] = -1
-
 X = np.zeros([len(df) - past, past, 18])
 for i in range(len(df) - past):
     X[i] = df[i : i + past]
