@@ -1,12 +1,11 @@
-import ccxt
-import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-# Initialize the bot
-exchange = ccxt.binance()
-symbol = 'BTC/USDT'
+source = "\\data_gathering\\store.csv"
+ohlcv = pd.read_csv(os.getcwd() + source, header=None)
 
-prices = np.array(exchange.fetch_ohlcv(symbol, "1m", limit=1000))[:, 4]
+prices = ohlcv[4]
 
-plt.plot(range(1000), prices)
+plt.plot(range(len(ohlcv)), prices)
 plt.show()
