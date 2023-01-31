@@ -50,12 +50,18 @@ def change(old, new):
     return ((new - old) / old) * 100
 
 
+import sys
+
+sys.path.append(os.getcwd())
 from data_gathering.data_merger_v4 import merge_data
 
 data = merge_data()
 
-X = data["X"]
-y = data["y"]
+X = np.array(data["X"])
+y = np.array(data["y"])
+
+print(X.shape)
+print(y.shape)
 
 # Training the model
 model = RandomForestClassifier(
@@ -105,7 +111,7 @@ for i in range(len(df) - past):
 X = X.reshape([len(df) - past, 18 * past])
 
 ## Perform the trading
-values = [np.zeros(len(df) - 33)] * 24
+values = [np.zeros(len(df))] * 24
 
 for confidence in [0.1, 0.2, 0.3, 0.4]:
     for close_confidence in [0, -0.1, -0.2, -0.3, -0.4, -0.5]:
@@ -138,6 +144,7 @@ for confidence in [0.1, 0.2, 0.3, 0.4]:
             values[int(confidence * 10 * 6 - 1 + (close_confidence * 10))][i] = (
                 capital + bitcoins * df[i, 0]
             )
+            print(capital + bitcoins * df[i, 0])
 
         print(
             "Confidence: ",
@@ -145,4 +152,9 @@ for confidence in [0.1, 0.2, 0.3, 0.4]:
             ", close confidence: ",
             str(close_confidence),
         )
-        plt.show()
+
+f, ax = plt.subplots(6, 4)
+for i in range(6):
+    for j in range(4):
+        ax[i, j].plot(values[i * 4 + j * 6])
+        ax[i, j].set_ylimit(29000, 31000)
