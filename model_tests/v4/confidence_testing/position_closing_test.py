@@ -145,7 +145,7 @@ X = X.reshape([len(df) - past, 18 * past])
 values = np.zeros(len(df) - 33)
 
 for confidence in [0.1, 0.2, 0.3, 0.4]:
-    for close_confidence in [-0.1, 0, 0.1]:
+    for close_confidence in [-0.2, -0.3]:
         values = np.zeros(len(df) - 33)
         capital = 30000
         bitcoins = 0
