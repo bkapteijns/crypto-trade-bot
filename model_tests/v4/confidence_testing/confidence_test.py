@@ -111,12 +111,13 @@ for i in range(len(df) - past):
 X = X.reshape([len(df) - past, 18 * past])
 
 ## Perform the trading
-values = [np.zeros(len(df))] * 24
+vals = []
 
 for confidence in [0.1, 0.2, 0.3, 0.4]:
     for close_confidence in [0, -0.1, -0.2, -0.3, -0.4, -0.5]:
         capital = 30000
         bitcoins = 0
+        values = []
         for i in range(len(df) - past):
             if model.predict_proba([X[i]])[0][1] >= 0.5 + confidence:
                 if not long:
@@ -141,20 +142,14 @@ for confidence in [0.1, 0.2, 0.3, 0.4]:
                     buy(df[i, 0] + 1)
                 long = False
                 short = False
-            values[int(confidence * 10 * 6 - 1 + (close_confidence * 10))][i] = (
-                capital + bitcoins * df[i, 0]
-            )
-            print(capital + bitcoins * df[i, 0])
+            values.append(capital + bitcoins * df[i, 0])
+        print(values)
+        vals.append(values)
 
-        print(
-            "Confidence: ",
-            str(confidence),
-            ", close confidence: ",
-            str(close_confidence),
-        )
+print(vals)
 
 f, ax = plt.subplots(6, 4)
-for i in range(6):
-    for j in range(4):
-        ax[i, j].plot(values[i * 4 + j * 6])
-        ax[i, j].set_ylimit(29000, 31000)
+for i in range(4):
+    for j in range(6):
+        ax[j, i].plot(vals[i * 6 + j])
+plt.show()
