@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import os
 
-stores = ["store1.csv", "store2.csv"]
 future = 20
 past = 100
 
@@ -12,7 +11,7 @@ def change(old, new):
     return ((new - old) / old) * 100
 
 
-def merge_data():
+def merge_data(stores):
     X = []
     y = []
 
