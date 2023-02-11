@@ -14,7 +14,7 @@ old_source = "\\data_gathering\\store.csv"
 
 while True:
     new_data = np.array(exchange.fetch_ohlcv(symbol, "1m", limit=1000))
-
+    
     old_data = pd.read_csv(os.getcwd() + old_source, header=None).to_numpy()
 
     for i in range(len(new_data)):
