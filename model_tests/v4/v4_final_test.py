@@ -56,7 +56,7 @@ import sys
 sys.path.append(os.getcwd())
 from data_gathering.data_merger_v4 import merge_data
 
-data = merge_data(["store1.csv", "store.csv"])
+data = merge_data(["store.csv", "store2.csv", "store3.csv"])
 
 X = np.array(data["X"])
 y = np.array(data["y"])
@@ -72,7 +72,7 @@ model.fit(X, y)
 
 
 #### Getting the test data
-source = "\\data_gathering\\store2.csv"
+source = "\\data_gathering\\store1.csv"
 ohlcv = pd.read_csv(os.getcwd() + source, header=None).to_numpy()
 df = pd.DataFrame(
     ohlcv, columns=["timestamp", "open", "high", "low", "close", "volume"]
